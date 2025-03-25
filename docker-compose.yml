@@ -1,0 +1,29 @@
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:latest
+    networks:
+      - msg-queue
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: unless-stopped
+
+  server-u2f:
+    container_name: server-u2f
+    build: 
+      context: ./server-u2f/
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - "8080:80"
+    depends_on:
+      - rabbitmq
+    networks:
+      - msg-queue
+    restart: unless-stopped
+
+networks:
+  msg-queue:
+    name: message-queue
+    driver: bridge

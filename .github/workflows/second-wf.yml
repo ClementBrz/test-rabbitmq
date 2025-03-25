@@ -1,0 +1,41 @@
+name: second-workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      device:
+        description: Device
+        required: true
+        type: string
+      app:
+        description: App
+        required: true
+        type: string
+
+env:
+  APP: ${{ github.event.inputs.app }}
+  DEVICE: ${{ github.event.inputs.device }}
+
+jobs:
+  receive-message:
+    name: Receive-Message
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "[STEP 0] Restore cache"
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}
+          key: "cache-${{ env.APP }}-${{ env.DEVICE }}"
+
+      - name: "[STEP 1] Download artifacts"
+        uses: actions/download-artifact@v4
+        with:
+          name: "artifact-${{ env.APP }}-${{ env.DEVICE }}"
+
+      - name: "Print received informations"
+        run: |
+          sudo echo "artifact=$(cat /artifact_${{ env.APP }}_${{ env.DEVICE }}/artifact.txt)"
+          echo "pwd=$(pwd)"
+          echo "ls=$(ls)"
+          echo "ls /=$(ls /)"
+          echo "Publishing ${{ env.APP }} on ${{ env. DEVICE }}!"

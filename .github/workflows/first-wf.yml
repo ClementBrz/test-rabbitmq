@@ -1,0 +1,66 @@
+name: first-workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      device:
+        description: Device
+        required: true
+        type: choice
+        options:
+          - 'iPhone'
+          - 'iPad'
+          - 'iPod'
+          - 'iMac'
+      app:
+        description: App
+        required: true
+        type: choice
+        options:
+          - 'google'
+          - 'instagram'
+          - 'ledgerlive'
+
+env:
+  DEVICE: ${{ github.event.inputs.device }}
+  APP: ${{ github.event.inputs.app }}
+
+jobs:
+  publish-message:
+    name: Publish-Message
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "[STEP 0] Cache"
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}
+          key: "cache-${{ env.APP }}-${{ env.DEVICE }}"
+
+      - name: "[STEP 1] Checkout repo"
+        uses: actions/checkout@v4
+
+      - name: "[STEP 2] Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: "[STEP 3] Creating artifact"
+        run: |
+          mkdir "${{ github.workspace }}/artifact_${{ env.APP }}_${{ env.DEVICE }}"
+          echo coucou > ${{ github.workspace }}/artifact_${{ env.APP }}_${{ env.DEVICE }}/artifact.txt
+      
+      - name: "[STEP 4] Uploading artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "artifact-${{ env.APP }}-${{ env.DEVICE }}"
+          path: ${{ github.workspace }}/artifact_${{ env.APP }}_${{ env.DEVICE }}
+
+      - name: "[STEP 5] Send message to RabbitMQ"
+        run: |
+          python3 -m venv ./venv
+          source ./venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          ./send_message.py --app "${{ env.APP }}" --device "${{ env.DEVICE }}"
+          echo "Message sent to RabbitMQ for ${{ env.APP }}-${{ env.DEVICE }} publish process!"
