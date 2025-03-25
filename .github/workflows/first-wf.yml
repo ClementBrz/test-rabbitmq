@@ -62,5 +62,5 @@ jobs:
           source ./venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
-          ./send_message.py --app "${{ env.APP }}" --device "${{ env.DEVICE }}"
+          ./send_message.py --app "${{ env.APP }}" --device "${{ env.DEVICE }}" --previous_run_id "${{ github.run_id}}"
           echo "Message sent to RabbitMQ for ${{ env.APP }}-${{ env.DEVICE }} publish process!"

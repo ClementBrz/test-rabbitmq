@@ -11,10 +11,15 @@ on:
         description: App
         required: true
         type: string
+      previous_run_id:
+        description: "Previous workflow run id"
+        required: true
+        type: string
 
 env:
   APP: ${{ github.event.inputs.app }}
   DEVICE: ${{ github.event.inputs.device }}
+  PREVIOUS_RUN_ID: ${{ github.event.inputs.previous_run_id }}
 
 jobs:
   receive-message:
@@ -31,12 +36,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: "artifact-${{ env.APP }}-${{ env.DEVICE }}"
-          repository: "ClementBrz/test-rabbitmq/actions/workflows/first-wf.yml"
+          repository: ${{ github.repository }}
           github-token: ${{ secrets.TEST_RABBITMQ}}
+          run-id: ${{ env.PREVIOUS_RUN_ID }}
 
       - name: "Print received informations"
         run: |
-          sudo echo "artifact=$(cat /artifact_${{ env.APP }}_${{ env.DEVICE }}/artifact.txt)"
+          sudo echo "artifact=$(cat ${{ github.workspace}}/artifact_${{ env.APP }}_${{ env.DEVICE }}/artifact.txt)"
           echo "pwd=$(pwd)"
           echo "ls=$(ls)"
           echo "ls /=$(ls /)"

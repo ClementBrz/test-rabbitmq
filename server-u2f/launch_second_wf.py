@@ -46,6 +46,7 @@ def launch_gh_workflow(ch, method, properties, body):
     run_cmd(gh_cmd)
     print(f"Command: {gh_cmd}: was successfully executed\n \
             Github Workflow: {WORKFLOW_NAME}: was triggered")
+    ch.basic_ack(delivery_tag = method.delivery_tag)
 
 
 def main():
