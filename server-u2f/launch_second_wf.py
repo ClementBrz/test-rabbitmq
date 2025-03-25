@@ -41,7 +41,7 @@ def run_cmd(cmd: str,
 
 def launch_gh_workflow(ch, method, properties, body):
     data = body.decode()
-    gh_cmd = f"echo '{data}' | gh workflow run {WORKFLOW_NAME} -R {WORKFLOW_REPOSITORY} \
+    gh_cmd = f"echo '{data}' | gh workflow run -R {WORKFLOW_REPOSITORY} {WORKFLOW_NAME} \
                 --json"
     run_cmd(gh_cmd)
     print(f"Command: {gh_cmd}: was successfully executed\n \

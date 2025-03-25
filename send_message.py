@@ -20,7 +20,7 @@ if __name__== "__main__":
 	# if args.app or args.device:
 	#	 raise ValueError()
 
-	connection = pika.BlockingConnection(pika.ConnectionParameters('172.18.0.2'))
+	connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 	channel = connection.channel()
 
 	channel.queue_declare(queue='u2f_sign_queue', durable=True)

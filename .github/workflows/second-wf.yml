@@ -31,6 +31,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: "artifact-${{ env.APP }}-${{ env.DEVICE }}"
+          repository: "ClementBrz/test-rabbitmq/actions/workflows/first-wf.yml"
+          github-token: ${{ secrets.TEST_RABBITMQ}}
 
       - name: "Print received informations"
         run: |
